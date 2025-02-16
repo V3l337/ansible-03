@@ -1,0 +1,21 @@
+all:
+  children:
+    clickhouse:
+      hosts:
+        clickhouse:
+          ansible_host: 89.169.154.33
+          ansible_user: v3ll
+          ansible_ssh_private_key_file: /root/ansible/ansible-03/sshkey
+    lighthouse:
+      hosts:
+        lighthouse:
+          ansible_host: 89.169.143.98
+          ansible_user: v3ll
+          ansible_ssh_private_key_file: /root/ansible/ansible-03/sshkey
+    vector:
+      hosts:
+        vector:
+          ansible_host: 89.169.149.148
+          ansible_user: v3ll
+          ansible_ssh_private_key_file: /root/ansible/ansible-03/sshkey
+  

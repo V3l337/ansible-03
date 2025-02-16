@@ -1,0 +1,12 @@
+- name: Get clickhouse distrib
+  ansible.builtin.get_url:
+    url: "https://packages.clickhouse.com/deb/pool/main/c/{{ item }}/{{ item }}_{{ clickhouse_version }}_amd64.deb"
+    dest: "./{{ item }}_{{ clickhouse_version }}_amd64.deb"
+  with_items: "{{ clickhouse_packages }}"
+
+- name: Install clickhouse packages
+  ansible.builtin.apt:
+    deb: "./{{ item }}_{{ clickhouse_version }}_amd64.deb"
+    state: present
+  with_items: "{{ clickhouse_packages }}"
+  notify: Start clickhouse service

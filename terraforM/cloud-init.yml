@@ -1,4 +1,5 @@
 #cloud-config
+
 users:
   - name: v3ll
     groups: sudo
@@ -6,5 +7,6 @@ users:
     shell: /bin/bash
     ssh-authorized-keys:
       - ${ssh_public_key}
+
 package_update: true
 package_upgrade: true

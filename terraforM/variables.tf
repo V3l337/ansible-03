@@ -64,4 +64,5 @@ variable "host_groups" {
     "vector"     = ["vector"]
     "lighthouse" = ["lighthouse"]
   }
+  description = "для инвентори файла"
 }

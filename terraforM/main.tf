@@ -12,8 +12,8 @@ resource "yandex_vpc_subnet" "develop" {
 # вм по кол-ву
 resource "yandex_compute_instance" "vm" {
   count = var.instance_count
-
   name = var.instance_names[count.index]
+  hostname = var.instance_names[count.index]
 
   resources {
     cores         = var.cores
@@ -36,7 +36,7 @@ resource "yandex_compute_instance" "vm" {
   metadata = {
     user-data = templatefile("${path.module}/cloud-init.yml", { 
         ssh_public_key = file(var.ssh_public_key)
-    })
+     })
   }
 }
 
