@@ -38,7 +38,7 @@ sinks:
       - "apache_sampler"       # only take sampled data
     type: "elasticsearch"
     endpoints:
-      - "http://79.12.221.222:9200"
+      - "http://*:9200"
     bulk:
       index: "vector-%Y-%m-%d" # daily indices
 

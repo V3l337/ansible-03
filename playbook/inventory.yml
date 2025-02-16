@@ -1,21 +1,24 @@
 all:
   children:
-    clickhouse:
+    clickhouse_group:
       hosts:
         clickhouse:
-          ansible_host: 89.169.154.33
+          ansible_host: 51.250.92.177
           ansible_user: v3ll
           ansible_ssh_private_key_file: /root/ansible/ansible-03/sshkey
-    lighthouse:
+          ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+    lighthouse_group:
       hosts:
         lighthouse:
-          ansible_host: 89.169.143.98
+          ansible_host: 158.160.106.112
           ansible_user: v3ll
           ansible_ssh_private_key_file: /root/ansible/ansible-03/sshkey
-    vector:
+          ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+    vector_group:
       hosts:
         vector:
-          ansible_host: 89.169.149.148
+          ansible_host: 158.160.103.134
           ansible_user: v3ll
           ansible_ssh_private_key_file: /root/ansible/ansible-03/sshkey
+          ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
   
