@@ -1,126 +1,18 @@
 ---
-- name: Install packages on Clickhouse hosts
+- name: Deploy ClickHouse
   hosts: clickhouse_group
   become: true
-  vars_files:
-    - group_vars/vars.yml  
-  tasks:
-    - name: Get clickhouse distrib
-      ansible.builtin.get_url:
-        url: "https://packages.clickhouse.com/deb/pool/main/c/{{ item }}/{{ item }}_{{ clickhouse_version }}_amd64.deb"
-        dest: "./{{ item }}_{{ clickhouse_version }}_amd64.deb"
-      with_items: "{{ clickhouse_packages }}"
+  roles:
+    - clickhouse
 
-    - name: Install clickhouse packages
-      ansible.builtin.apt:
-        deb: "./{{ item }}_{{ clickhouse_version }}_amd64.deb"
-        state: present
-      with_items: "{{ clickhouse_packages }}"
-      notify: Start clickhouse service
-
-  handlers:
-    - name: Start clickhouse service
-      ansible.builtin.systemd:
-        name: clickhouse-server
-        state: started
-        enabled: true
-
-- name: Install packages on Vector hosts
+- name: Deploy Vector
   hosts: vector_group
   become: true
-  vars_files:
-    - group_vars/vars.yml  
-  tasks:
-    - name: Install curl
-      ansible.builtin.apt:
-        name:
-          - curl
-        state: present
-        update_cache: yes
+  roles:
+    - vector-role
 
-    - name: Script detects platform and installs Vector
-      shell: curl --proto '=https' --tlsv1.2 -sSfL https://sh.vector.dev | bash -s -- -y
-
-    - name: Create directory for Vector configuration
-      ansible.builtin.file:
-        path: /etc/vector
-        state: directory
-        mode: '0755'
-
-    - name: Copy Vector configuration
-      ansible.builtin.template:
-        src: /root/ansible/ansible-03/playbook/templates/vector_conf.j2
-        dest: /etc/vector/vector.yaml
-        owner: root
-        group: root
-        mode: '0644'
-
-- name: Install packages on Lighthouse hosts
+- name: Deploy LightHouse
   hosts: lighthouse_group
   become: true
-  vars_files:
-    - group_vars/vars.yml  
-  tasks:
-    - name: Установить Nginx
-      ansible.builtin.apt:
-        name: nginx
-        state: present
-        update_cache: yes
-    
-    - name: Создать директорию для LightHouse /var/www/
-      ansible.builtin.file:
-        path: /var/www/lighthouse
-        state: directory
-        mode: '0755'
-
-    - name: Скачать файл index.html для LightHouse
-      ansible.builtin.get_url:
-        url: "https://raw.githubusercontent.com/VKCOM/lighthouse/master/index.html"
-        dest: "/var/www/lighthouse/index.html"
-        mode: '0644'
-
-    - name: Копировать конфигурацию Nginx для LightHouse
-      ansible.builtin.template:
-        src: /root/ansible/ansible-03/playbook/templates/lighthouse_nginx_conf.j2
-        dest: /etc/nginx/sites-available/lighthouse
-        owner: root
-        group: root
-        mode: '0644'
-
-    - name: Активировать сайт для Nginx
-      ansible.builtin.file:
-        src: /etc/nginx/sites-available/lighthouse
-        dest: /etc/nginx/sites-enabled/lighthouse
-        state: link
-
-    - name: Удалить символическую ссылку для конфигурации default
-      ansible.builtin.file:
-        path: /etc/nginx/sites-enabled/default
-        state: absent
-
-    - name: Перезапустить Nginx
-      ansible.builtin.systemd:
-        name: nginx
-        state: restarted
-        enabled: true
-
-  handlers:
-    - name: Start clickhouse service
-      ansible.builtin.systemd:
-        name: clickhouse-server
-        state: started
-        enabled: true
-
-    - name: Restart vector service
-      ansible.builtin.systemd:
-        name: vector
-        state: restarted
-
-    - name: Flush handlers for clickhouse service restart
-      meta: flush_handlers
-
-    - name: Create database for logs
-      ansible.builtin.command: "clickhouse-client -q 'create database logs;'"
-      register: create_db
-      failed_when: create_db.rc != 0 and create_db.rc != 82
-      changed_when: create_db.rc == 0
+  roles:
+    - lighthouse-role
